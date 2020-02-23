@@ -22,7 +22,29 @@ public class PlayerInput : MonoBehaviour
     protected bool m_Pause;
     protected bool m_ExternalInputBlocked;
 
+    //Wait and coroutine used for the attacks. Not used for now
+    WaitForSeconds m_AttackInputWait;
+    Coroutine m_AttackWaitCoroutine;
 
+    //Update just updates the values of the different input every frame. Must be used somewhere else to work
+    void Update()
+    {
+        m_Movement.Set(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        m_Camera.Set(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        m_Jump = Input.GetButton("Jump");
+
+        /*
+        if (Input.GetButtonDown("Fire1"))
+        {
+            if (m_AttackWaitCoroutine != null)
+               / StopCoroutine(m_AttackWaitCoroutine);
+
+            m_AttackWaitCoroutine = StartCoroutine(AttackWait());
+        }
+        */
+
+        m_Pause = Input.GetButtonDown("Pause");
+    }
 
     //The following methods just return a value calculated during update.
     //Either a bool or a vector2
@@ -62,5 +84,29 @@ public class PlayerInput : MonoBehaviour
     public bool Pause
     {
         get { return m_Pause; }
+    }
+
+    public bool HaveControl()
+    {
+        return !m_ExternalInputBlocked;
+    }
+
+    public void ReleaseControl()
+    {
+        m_ExternalInputBlocked = true;
+    }
+
+    public void GainControl()
+    {
+        m_ExternalInputBlocked = false;
+    }
+
+    IEnumerator AttackWait()
+    {
+        m_Attack = true;
+
+        yield return m_AttackInputWait;
+
+        m_Attack = false;
     }
 }
