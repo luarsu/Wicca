@@ -79,8 +79,12 @@ public class PlayerControllerIsometric : MonoBehaviour
         //This is the direction that the character should head
         Vector3 characterDirection = Vector3.Normalize(rightMovement + upMovement);
 
+
         //This is temporary, make it rotate prosperly next time
-        transform.forward = characterDirection;
+        //transform.forward = characterDirection;
+        UpdateOrientation(characterDirection);
+
+
         //transform.position += rightMovement + upMovement;
         m_CharCtrl.Move(characterDirection * m_ForwardSpeed * Time.deltaTime);
     }
@@ -102,6 +106,16 @@ public class PlayerControllerIsometric : MonoBehaviour
 
         // Adjust the forward speed towards the desired speed.
         m_ForwardSpeed = Mathf.MoveTowards(m_ForwardSpeed, m_DesiredForwardSpeed, acceleration * Time.deltaTime);
+    }
+
+    void UpdateOrientation(Vector3 characterDirection)
+        {
+        m_TargetRotation = Quaternion.LookRotation(characterDirection);
+
+        float groundedTurnSpeed = Mathf.Lerp(maxTurnSpeed, minTurnSpeed, m_ForwardSpeed / m_DesiredForwardSpeed);
+        m_TargetRotation = Quaternion.RotateTowards(transform.rotation, m_TargetRotation, groundedTurnSpeed * Time.deltaTime);
+
+        transform.rotation = m_TargetRotation;
     }
 
     protected bool IsMoveInput
