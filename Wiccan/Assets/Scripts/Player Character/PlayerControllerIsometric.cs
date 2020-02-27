@@ -79,7 +79,7 @@ public class PlayerControllerIsometric : MonoBehaviour
             {
                 StartDash();
             }
-            else if (!m_IsDashing)
+            else if (!m_IsDashing && (m_Input.MoveInput.x + m_Input.MoveInput.y) != 0)
             {
                 MoveCharacter();
             }
