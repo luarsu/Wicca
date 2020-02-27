@@ -1,0 +1,24 @@
+title: Start
+tags: 
+colorID: 0
+position: 636,174
+---
+Asi que dime, Saturne... Aceptas el Pacto?
+
+[[...Acepto | Aceptar]]
+[[...Vete al infierno | Negarse]]
+===
+title: Aceptar
+tags: 
+colorID: 0
+position: 472,436
+---
+Que asi sea... 👹
+===
+title: Negarse
+tags: 
+colorID: 0
+position: 747,436
+---
+Tuviste tu oportunidad... Disfruta tu mundana vida 😈
+===
