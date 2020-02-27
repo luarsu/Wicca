@@ -13,6 +13,9 @@ public class PlayerControllerIsometric : MonoBehaviour
     public float minTurnSpeed = 400f;         // How fast the character turns when moving at maximum speed.
     public float maxTurnSpeed = 1200f;        // How fast the character turns when stationary.
     public float idleTimeout = 5f;            // How long before the character starts considering random idles.
+    public float dashSpeed = 50f;             // How fast does the character go whe you dash.
+    public float dashDuration = 0.2f;         // How long does the dash last
+    public float dashCooldownDuration = 0.2f; // How long does the dash cooldown take
     public bool canAttack;                    // Whether or not the character can attack.
 
     protected bool m_IsGrounded = true;            // Whether or not the character is currently standing on the ground.
@@ -21,13 +24,17 @@ public class PlayerControllerIsometric : MonoBehaviour
     protected float m_DesiredForwardSpeed;         // How fast the character aims be going along the ground based on input.
     protected float m_ForwardSpeed;                // How fast the character is currently going along the ground.
     protected float m_VerticalSpeed;               // How fast the character is currently moving up or down.
-    protected PlayerInput m_Input;                  // Reference used to determine how the character should move.
+    protected PlayerInput m_Input;                 // Reference used to determine how the character should move.
     protected CharacterController m_CharCtrl;      // Reference used to actually move the character.
     protected Material m_CurrentWalkingSurface;    // Reference used to make decisions about audio.
     protected Quaternion m_TargetRotation;         // What rotation the character is aiming to have based on input.
-    protected float m_AngleDiff;                    // Angle in degrees between Ellen's current rotation and her target rotation.
+    protected float m_AngleDiff;                   // Angle in degrees between Ellen's current rotation and her target rotation.
     protected bool m_InAttack;                     // Whether the character is currently in the middle of a melee attack.
     protected bool m_InCombo;                      // Whether the character is currently in the middle of her melee combo.
+    protected bool m_IsDashAvialable;                // Wheter the dash is available or not
+    protected bool m_IsDashing;                    //True when the character is in the middle of a Dash
+    protected float m_DashTimer;                    //Timer to controll how long does the dash lasts
+    protected float m_DashCooldownTimer;           //Timer to decide when to reenable the dash
 
     //As the camera is isometric, we need to get the foward and right vector for our game (That is not the same as the character forward or the world normal)
     protected Vector3 ForwardIsometric;
@@ -50,27 +57,47 @@ public class PlayerControllerIsometric : MonoBehaviour
         m_CharCtrl = GetComponent<CharacterController>();
         s_Instance = this;
 
-        //
+        //Get the forward in isometric (It's not the same as the world transform)
         ForwardIsometric = Camera.main.transform.forward;
         ForwardIsometric.y = 0;
         ForwardIsometric = Vector3.Normalize(ForwardIsometric);
 
         //This basically is saying that Right = Forward rotated 90 degrees in the Y axis
         RightIsometric = Quaternion.Euler(new Vector3(0, 90, 0)) * ForwardIsometric;
+
+        m_IsDashing = false;
+        m_IsDashAvialable = true;
     }
 
+    //Update function calle devery physics frame
     void FixedUpdate()
     {
-        CalculateForwardMovement();
-        if(Input.anyKey)
+        //detect input from the player and do whatever is needed
+        if(Input.anyKey && m_Input.HaveControl())
         {
-            MoveCharacter();
+            if(m_Input.DashInput && m_IsDashAvialable)
+            {
+                StartDash();
+            }
+            else if (!m_IsDashing)
+            {
+                MoveCharacter();
+            }
         }
+
+        //Do it outside because otherwise it just detects the dashing while the key is pressed
+        if(m_IsDashing)
+        {
+            Dashing();
+        }
+
+        //Takes account of the movement related timers if needed
+        HandleTimers();
     }
 
     void MoveCharacter()
     {
-        Vector3 direction = new Vector3(m_Input.MoveInput.x, 0, m_Input.MoveInput.y);
+        CalculateForwardMovement();
 
         //Gets the speed in each of the axis in isometric
         Vector3 rightMovement = RightIsometric * m_ForwardSpeed * Time.deltaTime * m_Input.MoveInput.x;
@@ -81,12 +108,46 @@ public class PlayerControllerIsometric : MonoBehaviour
 
 
         //This is temporary, make it rotate prosperly next time
-        //transform.forward = characterDirection;
         UpdateOrientation(characterDirection);
 
 
         //transform.position += rightMovement + upMovement;
         m_CharCtrl.Move(characterDirection * m_ForwardSpeed * Time.deltaTime);
+    }
+
+    void StartDash()
+    {
+        m_IsDashing = true;
+        m_IsDashAvialable = false;
+        m_DashTimer = 0f;
+    }
+
+    void Dashing()
+    {
+        Vector3 dashDirection = transform.forward;
+
+        m_CharCtrl.Move(dashDirection * dashSpeed * Time.deltaTime);
+
+        m_DashTimer += Time.deltaTime;
+        if(m_DashTimer >= dashDuration)
+        {
+            m_IsDashing = false;
+            //set a timer to reenable the dash after a brief period.
+            m_DashCooldownTimer = 0f;
+        }
+    }
+
+    void HandleTimers()
+    {
+        if(m_DashCooldownTimer < dashCooldownDuration)
+        {
+            m_DashCooldownTimer += Time.deltaTime;
+
+            if(m_DashCooldownTimer >= dashCooldownDuration)
+            {
+                m_IsDashAvialable = true;
+            }
+        }
     }
 
     // Called each physics step.

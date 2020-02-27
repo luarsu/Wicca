@@ -17,7 +17,7 @@ public class PlayerInput : MonoBehaviour
 
     protected Vector2 m_Movement;
     protected Vector2 m_Camera;
-    protected bool m_Jump;
+    protected bool m_Dash;
     protected bool m_Attack;
     protected bool m_Pause;
     protected bool m_ExternalInputBlocked;
@@ -31,17 +31,7 @@ public class PlayerInput : MonoBehaviour
     {
         m_Movement.Set(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         m_Camera.Set(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-        m_Jump = Input.GetButton("Jump");
-
-        /*
-        if (Input.GetButtonDown("Fire1"))
-        {
-            if (m_AttackWaitCoroutine != null)
-               / StopCoroutine(m_AttackWaitCoroutine);
-
-            m_AttackWaitCoroutine = StartCoroutine(AttackWait());
-        }
-        */
+        m_Dash = Input.GetButton("Jump");
 
         m_Pause = Input.GetButtonDown("Pause");
     }
@@ -71,9 +61,9 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
-    public bool JumpInput
+    public bool DashInput
     {
-        get { return m_Jump && !playerControllerInputBlocked && !m_ExternalInputBlocked; }
+        get { return m_Dash && !playerControllerInputBlocked && !m_ExternalInputBlocked; }
     }
 
     public bool Attack

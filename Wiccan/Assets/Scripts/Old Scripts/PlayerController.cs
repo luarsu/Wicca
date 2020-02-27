@@ -116,7 +116,7 @@ public class PlayerController : MonoBehaviour
     void CalculateVerticalMovement()
     {
         // If jump is not currently held and the character is on the ground then she is ready to jump.
-        if (!m_Input.JumpInput && m_IsGrounded)
+        if (!m_Input.DashInput && m_IsGrounded)
             m_ReadyToJump = true;
 
         if (m_IsGrounded)
@@ -125,7 +125,7 @@ public class PlayerController : MonoBehaviour
             m_VerticalSpeed = -gravity * k_StickingGravityProportion;
 
             // If jump is held, the character is ready to jump and not currently in the middle of a melee combo...
-            if (m_Input.JumpInput && m_ReadyToJump)
+            if (m_Input.DashInput && m_ReadyToJump)
             {
                 // ... then override the previously set vertical speed and make sure she cannot jump again.
                 m_VerticalSpeed = jumpSpeed;
@@ -136,7 +136,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             // If the character is in the air, the jump button is not held and the character is currently moving upwards...
-            if (!m_Input.JumpInput && m_VerticalSpeed > 0.0f)
+            if (!m_Input.DashInput && m_VerticalSpeed > 0.0f)
             {
                 // ... decrease the character's vertical speed.
                 // This is what causes holding jump to jump higher that tapping jump.
