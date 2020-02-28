@@ -5,10 +5,10 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 //Not used for now
 //[RequireComponent(typeof(Animator))]
-public class PlayerController : MonoBehaviour
+public class PlayerControllerOld2 : MonoBehaviour
 {
-    protected static PlayerController s_Instance;
-    public static PlayerController instance { get { return s_Instance; } }
+    protected static PlayerControllerOld2 s_Instance;
+    public static PlayerControllerOld2 instance { get { return s_Instance; } }
 
     public float maxForwardSpeed = 8f;        // How fast the character can run.
     public float gravity = 20f;               // How fast the character accelerates downwards when airborne.

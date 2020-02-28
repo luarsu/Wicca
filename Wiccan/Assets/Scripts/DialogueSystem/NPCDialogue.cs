@@ -15,6 +15,13 @@ public class NPCDialogue : MonoBehaviour
     [Header("Optional")]
     public YarnProgram scriptToLoad;
 
+    protected DialogueManager dialogueManager;
+
+    private void Awake()
+    {
+        dialogueManager = FindObjectOfType<DialogueManager>();
+    }
+
     void Start()
     {
         if (scriptToLoad != null)
@@ -26,19 +33,19 @@ public class NPCDialogue : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        PlayerControllerIsometric player = other.GetComponent<PlayerControllerIsometric>();
+        PlayerController player = other.GetComponent<PlayerController>();
         if (player)
         {
-            player.SetDialogueAvailable(this);
+            dialogueManager.SetDialogueAvailable(this);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        PlayerControllerIsometric player = other.GetComponent<PlayerControllerIsometric>();
+        PlayerController player = other.GetComponent<PlayerController>();
         if (player)
         {
-            player.SetDialogueUnavailable();
+            dialogueManager.SetDialogueUnavailable();
         }
     }
 }
