@@ -941,8 +941,8 @@ MonoBehaviour:
   minTurnSpeed: 600
   maxTurnSpeed: 1200
   idleTimeout: 5
-  dashSpeed: 50
-  dashDuration: 0.2
+  dashSpeed: 100
+  dashDuration: 0.1
   dashCooldownDuration: 0.2
   canAttack: 0
 --- !u!114 &847837220
@@ -1630,7 +1630,7 @@ MonoBehaviour:
   onDialogueEnd:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2040122231}
+      - m_Target: {fileID: 802275945}
         m_MethodName: SetActive
         m_Mode: 6
         m_Arguments:
