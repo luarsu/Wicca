@@ -20,6 +20,7 @@ public class PlayerInput : MonoBehaviour
     protected bool m_Dash;
     protected bool m_Attack;
     protected bool m_Pause;
+    protected bool m_Interact;
     protected bool m_ExternalInputBlocked;
 
     //Wait and coroutine used for the attacks. Not used for now
@@ -32,6 +33,7 @@ public class PlayerInput : MonoBehaviour
         m_Movement.Set(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         m_Camera.Set(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         m_Dash = Input.GetButton("Jump");
+        m_Interact = Input.GetButton("Interact");
 
         m_Pause = Input.GetButtonDown("Pause");
     }
@@ -74,6 +76,11 @@ public class PlayerInput : MonoBehaviour
     public bool Pause
     {
         get { return m_Pause; }
+    }
+
+    public bool InteractInput
+    {
+        get { return m_Interact;}
     }
 
     public bool HaveControl()

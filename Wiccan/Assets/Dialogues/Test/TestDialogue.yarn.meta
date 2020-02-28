@@ -10,11 +10,9 @@ ScriptedImporter:
   script: {fileID: 11500000, guid: 94073015eacc34c1d8fc6786e43d60ca, type: 3}
   baseLanguageID: en-GB
   stringIDs:
-  - TestDialogue-Start-0
-  - TestDialogue-Start-1
-  - TestDialogue-Start-2
-  - TestDialogue-Aceptar-3
-  - TestDialogue-Negarse-4
+  - TestDialogue-Sphynx-0
+  - TestDialogue-Sphynx-1
+  - TestDialogue-Sphynx-2
   compilationStatus: 1
   isSuccesfullyCompiled: 1
   compilationErrorMessage: 

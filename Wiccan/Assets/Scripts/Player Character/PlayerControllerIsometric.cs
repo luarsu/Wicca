@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Yarn.Unity;
 using UnityEngine;
 
 public class PlayerControllerIsometric : MonoBehaviour
@@ -31,10 +32,26 @@ public class PlayerControllerIsometric : MonoBehaviour
     protected float m_AngleDiff;                   // Angle in degrees between Ellen's current rotation and her target rotation.
     protected bool m_InAttack;                     // Whether the character is currently in the middle of a melee attack.
     protected bool m_InCombo;                      // Whether the character is currently in the middle of her melee combo.
+
+    //Dash related variables
     protected bool m_IsDashAvialable;                // Wheter the dash is available or not
     protected bool m_IsDashing;                    //True when the character is in the middle of a Dash
     protected float m_DashTimer;                    //Timer to controll how long does the dash lasts
     protected float m_DashCooldownTimer;           //Timer to decide when to reenable the dash
+
+    //Dialogue related variables
+    private float LineDisplaySpeedNormal = 0.04f;    //Velocidad normal para el texto (cuanto menor es mas rapido va)
+    private float LineDisplaySpeedFast = 0.01f;       //Velocidad rapida para el texto (cuanto menor es mas rapido va)
+    protected NPCDialogue NPCToTalk;                //Npc that is close enough to you to talk
+    protected DialogueRunner dialogueRunner;        //Reference to the dialogueRunner
+    protected DialogueUI dialogueUI;                //Reference to the dialogueUI
+    protected bool IsDialogueAvailable = false;     //True is there's someone you can talk to near
+    protected bool IsInConversation = false;        //True if you're in the middle of a conversation/dialogue
+    protected float TalkToNPCAgainTimer;            //Little timer so that the player doesn't start a dialogue again by mistake
+    protected float TalkToNPCAgainCooldown = 0.3f;  //Cooldown start a conversation again
+    protected float TimebetweenLinesTimer;            //Little timer so that the player doesn't start a dialogue again by mistake
+    protected float TimebetweenLinesCooldown = 0.3f;  //Cooldown start a conversation again
+    protected bool IsLineBeingDisplayed = false;    //True is a line is being written but it's not completed
 
     //As the camera is isometric, we need to get the foward and right vector for our game (That is not the same as the character forward or the world normal)
     protected Vector3 ForwardIsometric;
@@ -55,6 +72,8 @@ public class PlayerControllerIsometric : MonoBehaviour
     {
         m_Input = GetComponent<PlayerInput>();
         m_CharCtrl = GetComponent<CharacterController>();
+        dialogueRunner = FindObjectOfType<DialogueRunner>();
+        dialogueUI = FindObjectOfType<DialogueUI>();
         s_Instance = this;
 
         //Get the forward in isometric (It's not the same as the world transform)
@@ -69,7 +88,33 @@ public class PlayerControllerIsometric : MonoBehaviour
         m_IsDashAvialable = true;
     }
 
-    //Update function calle devery physics frame
+    private void Update()
+    {
+        if(IsDialogueAvailable && m_Input.InteractInput && !IsInConversation && TalkToNPCAgainTimer <=0)
+        {
+            //Start the dialogue and set everything up
+            dialogueRunner.StartDialogue(NPCToTalk.talkToNode);
+            SetNormalLineDisplaySpeed();
+            IsInConversation = true;
+            TimebetweenLinesTimer = TimebetweenLinesCooldown;
+
+            //disable movement
+            m_Input.ReleaseControl();
+        } else if(IsInConversation && m_Input.InteractInput && IsLineBeingDisplayed)
+        {
+            if(TimebetweenLinesTimer <= 0)
+            {
+                //Make the line display faster
+                dialogueUI.textSpeed = LineDisplaySpeedFast;
+            }
+        } else if (IsInConversation && m_Input.InteractInput)
+        {
+            dialogueUI.MarkLineComplete();
+            TimebetweenLinesTimer = TimebetweenLinesCooldown;
+        }
+    }
+
+    //Update function calle devery physics frame. Used for movement related things
     void FixedUpdate()
     {
         //detect input from the player and do whatever is needed
@@ -141,12 +186,22 @@ public class PlayerControllerIsometric : MonoBehaviour
     {
         if(m_DashCooldownTimer < dashCooldownDuration)
         {
-            m_DashCooldownTimer += Time.deltaTime;
+            m_DashCooldownTimer += Time.fixedDeltaTime;
 
             if(m_DashCooldownTimer >= dashCooldownDuration)
             {
                 m_IsDashAvialable = true;
             }
+        }
+
+        if(TimebetweenLinesTimer >= 0)
+        {
+            TimebetweenLinesTimer -= Time.deltaTime;
+        }
+
+        if (TalkToNPCAgainTimer >= 0)
+        {
+            TalkToNPCAgainTimer -= Time.deltaTime;
         }
     }
 
@@ -182,5 +237,39 @@ public class PlayerControllerIsometric : MonoBehaviour
     protected bool IsMoveInput
     {
         get { return !Mathf.Approximately(m_Input.MoveInput.sqrMagnitude, 0f); }
+    }
+
+    //Set the NPC you can talk to and make it available
+    public void SetDialogueAvailable(NPCDialogue npc)
+    {
+        NPCToTalk = npc;
+        IsDialogueAvailable = true;
+        //m_Input.ReleaseControl();
+    }
+
+    //Reset the dialogue options
+    public void SetDialogueUnavailable()
+    {
+        NPCToTalk = null;
+        IsDialogueAvailable = false;
+    }
+
+    public void EndConversation()
+    {
+        IsInConversation = false;
+        m_Input.GainControl();
+
+        //Set timer so you don't start a conversation immediately again
+        TalkToNPCAgainTimer = TalkToNPCAgainCooldown;
+    }
+
+    public void SetLineBeingDisplayed(bool displayed)
+    {
+        IsLineBeingDisplayed = displayed;
+    }
+
+    public void SetNormalLineDisplaySpeed()
+    {
+        dialogueUI.textSpeed = LineDisplaySpeedNormal;
     }
 }
