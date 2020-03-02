@@ -24,8 +24,8 @@ public class PlayerInput : MonoBehaviour
     protected bool m_ExternalInputBlocked;
 
     //Wait and coroutine used for the attacks. Not used for now
-    WaitForSeconds m_AttackInputWait;
-    Coroutine m_AttackWaitCoroutine;
+    //WaitForSeconds m_AttackInputWait;
+    //Coroutine m_AttackWaitCoroutine;
 
     //Update just updates the values of the different input every frame. Must be used somewhere else to work
     void Update()
@@ -97,7 +97,7 @@ public class PlayerInput : MonoBehaviour
     {
         m_ExternalInputBlocked = false;
     }
-
+    /*
     IEnumerator AttackWait()
     {
         m_Attack = true;
@@ -106,4 +106,5 @@ public class PlayerInput : MonoBehaviour
 
         m_Attack = false;
     }
+    */
 }

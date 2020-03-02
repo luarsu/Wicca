@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 7993ee5612cd01a49ab843ac9ea87b24
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 94073015eacc34c1d8fc6786e43d60ca, type: 3}
+  baseLanguageID: en-GB
+  stringIDs:
+  - TestDialogueNormal 1-Sphynx-0
+  - TestDialogueNormal 1-Sphynx-1
+  - TestDialogueNormal 1-Sphynx-2
+  - TestDialogueNormal 1-Sphynx-3
+  - TestDialogueNormal 1-Sphynx-4
+  compilationStatus: 1
+  isSuccesfullyCompiled: 1
+  compilationErrorMessage: 
+  baseLanguage: {fileID: 7128917941130120860, guid: 7993ee5612cd01a49ab843ac9ea87b24,
+    type: 3}
+  localizations: []

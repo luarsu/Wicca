@@ -68,6 +68,8 @@ namespace Yarn.Unity
 
         private System.Action<int> _selectAction;
 
+        private DialogueManager dialogueManager;
+
         public delegate void CommandHandler(string[] parameters);
         public delegate void BlockingCommandHandler(string[] parameters, System.Action onComplete);
 
@@ -98,7 +100,11 @@ namespace Yarn.Unity
         // is called. If it's true after calling a blocking command
         // handler, then the Dialogue is not told to pause.
         private bool wasCompleteCalled = false;
-        
+
+        private void Awake()
+        {
+            dialogueManager = FindObjectOfType<DialogueManager>();
+        }
         /// Our conversation engine
         /** Automatically created on first access
          */
@@ -182,8 +188,10 @@ namespace Yarn.Unity
 
         private void HandleOptions(OptionSet options)
         {
-            
-            this.dialogueUI.RunOptions(options, strings, _selectAction);
+            //this.dialogueUI.RunOptions(options, strings, _selectAction);
+
+            //changed this for my own way of handling dialogue optionsc
+            this.dialogueManager.SetupOptions(options, strings, _selectAction);
         }
 
         private Dialogue.HandlerExecutionType HandleCommand(Command command)
@@ -284,7 +292,7 @@ namespace Yarn.Unity
         }
 
         /// Forward the line to the dialogue UI.
-        private Dialogue.HandlerExecutionType HandleLine(Line line)
+        public Dialogue.HandlerExecutionType HandleLine(Line line)
         {
             return this.dialogueUI.RunLine (line, strings, _continue);            
         }

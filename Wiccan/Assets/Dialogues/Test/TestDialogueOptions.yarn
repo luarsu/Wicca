@@ -1,0 +1,23 @@
+title: Start
+tags: 
+colorID: 0
+position: 784,234
+---
+Asi que dime... Vas a aceptar el trator?
+[[ Acepto... Toma mi sangre. | Accept ]]
+[[ No gracias. Tal vez en otra vida. | Reject ]]
+===
+title: Accept
+tags: 
+colorID: 0
+position: 588,601
+---
+Perfecto... Que comience el juego.
+===
+title: Reject
+tags: 
+colorID: 0
+position: 984,597
+---
+Oh... de acuerdo. Si cambias de opinion, ya sabes como invocarme.
+===

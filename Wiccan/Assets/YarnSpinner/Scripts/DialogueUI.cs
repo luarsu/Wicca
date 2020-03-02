@@ -75,6 +75,9 @@ namespace Yarn.Unity {
         public UnityEngine.Events.UnityEvent onOptionsEnd;
 
         public DialogueRunner.StringUnityEvent onCommand;
+
+        private bool newLineCanGo = true;
+        private bool isInOptions = false;
         
         void Awake ()
         {
@@ -97,6 +100,13 @@ namespace Yarn.Unity {
 
         /// Show a line of dialogue, gradually        
         private IEnumerator DoRunLine(Yarn.Line line, IDictionary<string,string> strings, System.Action onComplete) {
+
+            while (!newLineCanGo)
+            {
+                //this is done so that when we're displaying the options and changing the text doing so the text doesn't bug
+                yield return new WaitForEndOfFrame();
+            }
+
             onLineStart?.Invoke();
 
             userRequestedNextLine = false;
@@ -107,9 +117,10 @@ namespace Yarn.Unity {
             }
 
             if (textSpeed > 0.0f) {
+                newLineCanGo = false;
                 // Display the line one character at a time
                 var stringBuilder = new StringBuilder ();
-
+               
                 foreach (char c in text) {
                     stringBuilder.Append (c);
                     onLineUpdate?.Invoke(stringBuilder.ToString ());
@@ -126,6 +137,8 @@ namespace Yarn.Unity {
                 onLineUpdate?.Invoke(text);
             }
 
+            //tell the waiting line that it can go now that the old one is out of the loop
+            newLineCanGo = true;
             // We're now waiting for the player to move on to the next line
             userRequestedNextLine = false;
 
@@ -141,8 +154,10 @@ namespace Yarn.Unity {
 
             // Hide the text and prompt
             onLineEnd?.Invoke();
-
-            onComplete();
+            if(!isInOptions)
+            {
+                onComplete();
+            }
 
         }
 
@@ -250,6 +265,31 @@ namespace Yarn.Unity {
             }
             waitingForOptionSelection = false;
             currentOptionSelectionHandler?.Invoke(index);
+        }
+
+        public void SetcurrentOptionSelectionHandler(System.Action<int> selectionHandler)
+        {
+            currentOptionSelectionHandler = selectionHandler;
+        }
+
+        public void CallOnOptionsStart()
+        {
+            onOptionsStart?.Invoke();
+        }
+
+        public void CallOnOptionsEnd()
+        {
+            onOptionsEnd?.Invoke();
+        }
+
+        public void SetIsInOptions(bool options)
+        {
+            isInOptions = options;
+        }
+
+        public void SetWaitingForOptionSelection(bool waiting)
+        {
+            waitingForOptionSelection = waiting;
         }
 
     }

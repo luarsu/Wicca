@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PhysicsBasedController : MonoBehaviour {
-
+    /*
     private float maxSpeed = 9.0f;
     private Vector3 speed = new Vector3(0,0,0);
     private Vector3 lastSpeed;
@@ -12,6 +12,7 @@ public class PhysicsBasedController : MonoBehaviour {
     private float acceleration = 2.0f;
     private float jumpSpeed = 300.0f;
     private float distToGround;
+    
     private Rigidbody rigidbody;
     private CapsuleCollider collider;
 
@@ -86,4 +87,5 @@ public class PhysicsBasedController : MonoBehaviour {
     {
         return Physics.Raycast(transform.position, -Vector3.up, distToGround + 0.2f);
     }
+    */
 }
