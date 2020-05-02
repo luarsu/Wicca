@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
     protected static PlayerController s_Instance;
     public static PlayerController Instance { get { return s_Instance; } }
 
-    public float maxForwardSpeed = 8f;        // How fast the character can run.
+    public float maxForwardSpeed = 50f;        // How fast the character can run.
     public float gravity = 20f;               // How fast the character accelerates downwards when airborne.
     public float jumpSpeed = 10f;             // How fast the character takes off when jumping.
     public float minTurnSpeed = 400f;         // How fast the character turns when moving at maximum speed.
@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     public float dashSpeed = 50f;             // How fast does the character go whe you dash.
     public float dashDuration = 0.2f;         // How long does the dash last
     public float dashCooldownDuration = 0.2f; // How long does the dash cooldown take
+    public float BlendoutSpeed = 20.0f;         //This is the parameter we'll use to indicate the animation that is running and blend it
     public bool canAttack;                    // Whether or not the character can attack.
 
     protected bool m_IsGrounded = true;            // Whether or not the character is currently standing on the ground.
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviour
     protected float m_VerticalSpeed;               // How fast the character is currently moving up or down.
     protected PlayerInput m_Input;                 // Reference used to determine how the character should move.
     protected CharacterController m_CharCtrl;      // Reference used to actually move the character.
+    protected Animator m_Animator;
     protected Material m_CurrentWalkingSurface;    // Reference used to make decisions about audio.
     protected Quaternion m_TargetRotation;         // What rotation the character is aiming to have based on input.
     protected float m_AngleDiff;                   // Angle in degrees between Ellen's current rotation and her target rotation.
@@ -60,6 +62,7 @@ public class PlayerController : MonoBehaviour
     {
         m_Input = GetComponent<PlayerInput>();
         m_CharCtrl = GetComponent<CharacterController>();
+        m_Animator = GetComponent<Animator>();
         s_Instance = this;
 
         //Get the forward in isometric (It's not the same as the world transform)
@@ -89,9 +92,16 @@ public class PlayerController : MonoBehaviour
                 MoveCharacter();
             }
         }
+        else if(m_ForwardSpeed > 0)
+        {
+            m_ForwardSpeed -= Time.deltaTime * BlendoutSpeed;
+        }
+       
+        m_Animator.SetFloat("moving", m_ForwardSpeed);
+        
 
         //Do it outside because otherwise it just detects the dashing while the key is pressed
-        if(m_IsDashing)
+        if (m_IsDashing)
         {
             Dashing();
         }
