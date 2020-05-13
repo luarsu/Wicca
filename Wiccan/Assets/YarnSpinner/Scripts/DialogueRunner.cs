@@ -64,6 +64,10 @@ namespace Yarn.Unity
 
         public bool automaticCommands = true;
 
+        public Transform[] targets;
+
+        public TestBubbleSystem bubbleController;
+
         private System.Action _continue;
 
         private System.Action<int> _selectAction;
@@ -422,18 +426,41 @@ namespace Yarn.Unity
 
         /// Start the dialogue from the start node
         public void StartDialogue () {
-            StartDialogue(startNode);
+            StartDialogue(startNode, null);
         }
 
         /// Start the dialogue from a given node
-        public void StartDialogue (string startNode)
+        public void StartDialogue (string startNode, Transform[] newTargets)
         {
-
+            targets = newTargets;
+            if(targets.Length > 0)
+            {
+                bubbleController.setTarget(targets[0]);
+                bubbleController.setBubble();
+            }
+            else
+            {
+                //There are no targets set for this dialogue
+            }
+            
             // Stop any processes that might be running already
             dialogueUI.StopAllCoroutines ();
 
             // Get it going
             RunDialogue (startNode);
+        }
+
+        //Yarn command used to change the target of the bubble given by the yarn dialogue script
+        [YarnCommand("changeTarget")]
+        public void ChangeTarget(string targetNumber)
+        {
+            int number = int.Parse(targetNumber);
+
+            if(number < targets.Length)
+            {
+                bubbleController.setTarget(targets[number]);
+            }
+            
         }
 
         private void ContinueDialogue()
@@ -764,5 +791,4 @@ namespace Yarn.Unity
         public abstract void ResetToDefaults ();
 
     }
-
 }

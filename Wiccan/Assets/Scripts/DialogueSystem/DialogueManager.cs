@@ -27,6 +27,7 @@ public class DialogueManager : MonoBehaviour
     protected bool IsInOptions = false;             //True when choosing for an option
     protected Yarn.OptionSet optionsAvailable;      //We save the optoins here when you have to choose
     protected int optionSelected;
+    protected Transform[] targets;
     public GameObject LeftArrow, RightArrow;        //Arrows for the options UI
     protected System.Action systemAction;
 
@@ -46,7 +47,7 @@ public class DialogueManager : MonoBehaviour
         if (IsDialogueAvailable && m_Input.InteractInput && !IsInConversation && TalkToNPCAgainTimer <= 0)
         {
             //Start the dialogue and set everything up
-            dialogueRunner.StartDialogue(NPCToTalk.talkToNode);
+            dialogueRunner.StartDialogue(NPCToTalk.talkToNode, targets);
             SetNormalLineDisplaySpeed();
             IsInConversation = true;
             TimeBetweenLinesTimer = TimebetweenLinesCooldown;
@@ -143,10 +144,11 @@ public class DialogueManager : MonoBehaviour
 
 
     //Set the NPC you can talk to and make it available
-    public void SetDialogueAvailable(NPCDialogue npc)
+    public void SetDialogueAvailable(NPCDialogue npc, Transform[] newTargets)
     {
         NPCToTalk = npc;
         IsDialogueAvailable = true;
+        targets = newTargets;
         //m_Input.ReleaseControl();
     }
 
@@ -155,6 +157,7 @@ public class DialogueManager : MonoBehaviour
     {
         NPCToTalk = null;
         IsDialogueAvailable = false;
+        targets = null;
     }
 
     public void EndConversation()

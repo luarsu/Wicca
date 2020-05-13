@@ -12,6 +12,8 @@ public class NPCDialogue : MonoBehaviour
 
     public string talkToNode = "";
 
+    public Transform[] targets;
+
     [Header("Optional")]
     public YarnProgram scriptToLoad;
 
@@ -36,7 +38,7 @@ public class NPCDialogue : MonoBehaviour
         PlayerController player = other.GetComponent<PlayerController>();
         if (player)
         {
-            dialogueManager.SetDialogueAvailable(this);
+            dialogueManager.SetDialogueAvailable(this, targets);
         }
     }
 

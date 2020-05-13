@@ -15,29 +15,12 @@ public class TestBubbleSystem : MonoBehaviour
     public float maxDistanceBubbleToTriangle = 90;
 
     private float offsetBubbleToTriangle = 72;
-    
-    void Start()
-    {
-        currentTarget = target1;
-    }
+
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown("1"))
-        {
-            currentTarget = target1;
-            setBubble();
-        }
-        if(Input.GetKeyDown("2"))
-        {
-            currentTarget = target2;
-            setBubble();
-        }
-
         updateBubblePosition();
-
-        
     }
 
     public void setBubble()
@@ -50,6 +33,11 @@ public class TestBubbleSystem : MonoBehaviour
         //Add the offset from the triangle to the bubble to look right and set the position of the bubble
         BubblePosition.y += offsetBubbleToTriangle;
         BubbleTransform.position = BubblePosition;
+    }
+
+    public void setTarget(Transform newTarget)
+    {
+        currentTarget = newTarget;
     }
 
     public void updateBubblePosition()
