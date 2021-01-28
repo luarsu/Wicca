@@ -1,12 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Yarn.Unity;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerControllerNew : MonoBehaviour
 {
-    protected static PlayerController s_Instance;
-    public static PlayerController Instance { get { return s_Instance; } }
+    protected static PlayerControllerNew s_Instance;
+    public static PlayerControllerNew Instance { get { return s_Instance; } }
 
     public float maxForwardSpeed = 50f;        // How fast the character can run.
     public float gravity = 20f;               // How fast the character accelerates downwards when airborne.
@@ -19,6 +18,18 @@ public class PlayerController : MonoBehaviour
     public float dashCooldownDuration = 0.2f; // How long does the dash cooldown take
     public float BlendoutSpeed = 20.0f;         //This is the parameter we'll use to indicate the animation that is running and blend it
     public bool canAttack;                    // Whether or not the character can attack.
+
+    /*Variables to change movement to Jammo´s*/
+    public float Velocity;
+    [Space]
+    public float desiredRotationSpeed = 0.1f;
+    public float allowPlayerRotation = 0.1f;
+    public bool blockRotationPlayer;
+    private Camera cam;
+    public float Speed;
+    private float InputX;
+    private float InputZ;
+    private Vector3 desiredMoveDirection;
 
     protected bool m_IsGrounded = true;            // Whether or not the character is currently standing on the ground.
     protected bool m_PreviouslyGrounded = true;    // Whether or not the character was standing on the ground last frame.
@@ -41,7 +52,7 @@ public class PlayerController : MonoBehaviour
     protected float m_DashTimer;                    //Timer to controll how long does the dash lasts
     protected float m_DashCooldownTimer;           //Timer to decide when to reenable the dash
 
-    
+
 
     //As the camera is isometric, we need to get the foward and right vector for our game (That is not the same as the character forward or the world normal)
     protected Vector3 ForwardIsometric;
@@ -75,15 +86,17 @@ public class PlayerController : MonoBehaviour
 
         m_IsDashing = false;
         m_IsDashAvialable = true;
+
+        cam = Camera.main;
     }
 
     //Update function called every physics frame. Used for movement related things
     void FixedUpdate()
     {
         //detect input from the player and do whatever is needed
-        if(Input.anyKey && m_Input.HaveControl())
+        if (Input.anyKey && m_Input.HaveControl())
         {
-            if(m_Input.DashInput && m_IsDashAvialable)
+            if (m_Input.DashInput && m_IsDashAvialable)
             {
                 StartDash();
             }
@@ -92,13 +105,9 @@ public class PlayerController : MonoBehaviour
                 MoveCharacter();
             }
         }
-        else if(m_ForwardSpeed > 0)
-        {
-            m_ForwardSpeed -= Time.deltaTime * BlendoutSpeed;
-        }
-       
-        m_Animator.SetFloat("moving", m_ForwardSpeed);
-        
+
+        m_Animator.SetFloat("moving", Speed);
+
 
         //Do it outside because otherwise it just detects the dashing while the key is pressed
         if (m_IsDashing)
@@ -112,8 +121,16 @@ public class PlayerController : MonoBehaviour
 
     void MoveCharacter()
     {
+        Speed = new Vector2(m_Input.MoveInput.x, m_Input.MoveInput.y).sqrMagnitude;
+
+        if (Speed > allowPlayerRotation)
+        {
+            PlayerMoveAndRotation();
+        }
+
         CalculateForwardMovement();
 
+        /*
         //Gets the speed in each of the axis in isometric
         Vector3 rightMovement = RightIsometric * m_ForwardSpeed * Time.deltaTime * m_Input.MoveInput.x;
         Vector3 upMovement = ForwardIsometric * m_ForwardSpeed * Time.deltaTime * m_Input.MoveInput.y;
@@ -128,6 +145,30 @@ public class PlayerController : MonoBehaviour
 
         //transform.position += rightMovement + upMovement;
         m_CharCtrl.Move(characterDirection * m_ForwardSpeed * Time.deltaTime);
+        */
+    }
+
+    void PlayerMoveAndRotation()
+    {
+        InputX = Input.GetAxis("Horizontal");
+        InputZ = Input.GetAxis("Vertical");
+
+        var forward = cam.transform.forward;
+        var right = cam.transform.right;
+
+        forward.y = 0f;
+        right.y = 0f;
+
+        forward.Normalize();
+        right.Normalize();
+
+        desiredMoveDirection = forward * m_Input.MoveInput.y + right * m_Input.MoveInput.x;
+
+        if (blockRotationPlayer == false)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(desiredMoveDirection), desiredRotationSpeed);
+            m_CharCtrl.Move(desiredMoveDirection * Time.deltaTime * Velocity);
+        }
     }
 
     void StartDash()
@@ -144,7 +185,7 @@ public class PlayerController : MonoBehaviour
         m_CharCtrl.Move(dashDirection * dashSpeed * Time.deltaTime);
 
         m_DashTimer += Time.deltaTime;
-        if(m_DashTimer >= dashDuration)
+        if (m_DashTimer >= dashDuration)
         {
             m_IsDashing = false;
             //set a timer to reenable the dash after a brief period.
@@ -154,11 +195,11 @@ public class PlayerController : MonoBehaviour
 
     void HandleTimers()
     {
-        if(m_DashCooldownTimer < dashCooldownDuration)
+        if (m_DashCooldownTimer < dashCooldownDuration)
         {
             m_DashCooldownTimer += Time.fixedDeltaTime;
 
-            if(m_DashCooldownTimer >= dashCooldownDuration)
+            if (m_DashCooldownTimer >= dashCooldownDuration)
             {
                 m_IsDashAvialable = true;
             }
@@ -185,7 +226,7 @@ public class PlayerController : MonoBehaviour
     }
 
     void UpdateOrientation(Vector3 characterDirection)
-        {
+    {
         m_TargetRotation = Quaternion.LookRotation(characterDirection);
 
         float groundedTurnSpeed = Mathf.Lerp(maxTurnSpeed, minTurnSpeed, m_ForwardSpeed / m_DesiredForwardSpeed);
@@ -197,5 +238,20 @@ public class PlayerController : MonoBehaviour
     protected bool IsMoveInput
     {
         get { return !Mathf.Approximately(m_Input.MoveInput.sqrMagnitude, 0f); }
+    }
+
+    public void LookAt(Vector3 pos)
+    {
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(pos), desiredRotationSpeed);
+    }
+
+    public void RotateToCamera(Transform t)
+    {
+        var forward = cam.transform.forward;
+        var right = cam.transform.right;
+
+        desiredMoveDirection = forward;
+
+        t.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(desiredMoveDirection), desiredRotationSpeed);
     }
 }
