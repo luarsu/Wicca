@@ -5566,22 +5566,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0eec0f7d022808142b04063764a23b14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxForwardSpeed: 50
-  gravity: 20
-  jumpSpeed: 10
-  minTurnSpeed: 400
-  maxTurnSpeed: 1200
-  idleTimeout: 5
   dashSpeed: 50
   dashDuration: 0.2
   dashCooldownDuration: 0.2
-  BlendoutSpeed: 50
-  canAttack: 0
-  Velocity: 10
+  Velocity: 15
   desiredRotationSpeed: 0.3
   allowPlayerRotation: 0.1
   blockRotationPlayer: 0
   Speed: 0
+  AnimSpeed: 0
+  StartAnimTime: 0.3
+  StopAnimTime: 0.1
 --- !u!1 &510669616
 GameObject:
   m_ObjectHideFlags: 0
