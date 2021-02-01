@@ -21,21 +21,19 @@ public class PlayerControllerNew : MonoBehaviour
     private Camera cam;
     public float Speed;
     public float AnimSpeed;
-    private float InputX;
-    private float InputZ;
-    private Vector3 desiredMoveDirection;
     [Range(0, 1f)]
     public float StartAnimTime = 0.3f;
     [Range(0, 1f)]
     public float StopAnimTime = 0.15f;
 
+    protected float InputX;
+    protected float InputZ;
+    protected Vector3 desiredMoveDirection;
     protected bool m_IsGrounded = true;            // Whether or not the character is currently standing on the ground.
     protected bool m_PreviouslyGrounded = true;    // Whether or not the character was standing on the ground last frame.
-   
     protected PlayerInput m_Input;                 // Reference used to determine how the character should move.
     protected CharacterController m_CharCtrl;      // Reference used to actually move the character.
     protected Animator m_Animator;
-
 
     //Dash related variables
     protected bool m_IsDashAvialable;                // Wheter the dash is available or not
