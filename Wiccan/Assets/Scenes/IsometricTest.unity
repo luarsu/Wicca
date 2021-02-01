@@ -5114,8 +5114,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Followtarget: {fileID: 1823045157}
-  Velocity: 10
-  FollowOffset: 0.5
+  minVelocity: 1.04
+  maxVelocity: 20.8
+  minFollowDistance: 0.5
+  maxFollowDistance: 15.45
   desiredRotationSpeed: 0.3
 --- !u!4 &394082268
 Transform:
@@ -5848,7 +5850,6 @@ GameObject:
   m_Component:
   - component: {fileID: 643505918}
   - component: {fileID: 643505920}
-  - component: {fileID: 643505919}
   m_Layer: 0
   m_Name: DialogueBubble
   m_TagString: Untagged
@@ -5871,18 +5872,6 @@ Transform:
   m_Father: {fileID: 881415574}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &643505919
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 643505917}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ca484568e101f14cb69b59269618930, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!212 &643505920
 SpriteRenderer:
   m_ObjectHideFlags: 0
