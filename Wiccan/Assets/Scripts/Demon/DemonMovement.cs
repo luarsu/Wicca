@@ -12,12 +12,6 @@ public class DemonMovement : MonoBehaviour
     protected CharacterController characterController;      // Reference used to actually move the character.
     protected Vector3 desiredMoveDirection;
 
-    void Awake()
-    {
-        characterController = GetComponent<CharacterController>();
-        characterController.detectCollisions = false;
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -35,7 +29,6 @@ public class DemonMovement : MonoBehaviour
         desiredMoveDirection = Followtarget.position - gameObject.transform.position;
 
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(desiredMoveDirection), desiredRotationSpeed);
-        characterController.Move(desiredMoveDirection * Time.deltaTime * Velocity);
-      
+        gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, Followtarget.position, Time.deltaTime * Velocity);
     }
 }
